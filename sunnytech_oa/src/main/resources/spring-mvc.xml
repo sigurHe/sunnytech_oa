@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--全局扫描-->
+    <context:component-scan base-package="cn.sunnytech.oa"/>
+
+    <!--上下文注解标签-->
+    <context:annotation-config/>
+    <!--使用注解驱动的mvc功能-->
+    <mvc:annotation-driven/>
+    <!--静态资源使用默认的Servlet-->
+    <mvc:default-servlet-handler/>
+
+    <mvc:interceptors>
+        <bean class="cn.sunnytech.oa.global.common.HttpInterceptor"/>
+    </mvc:interceptors>
+
+
+
+    <!--配置RequestMappingHandlerMapping，
+        把@RequestMapping注解找到对应的接口来进行，告诉我们的请求用什么样的代码-->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+
+    <!--配置BeanNameViewResolver
+    告诉我们springmvc项目，当我们来一个请求之后，该以什么样的格式返回回去-->
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+    <!--以json格式返回，用这个类处理-->
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+
+    <!--以jsp格式返回配置jsp，用这个类处理-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsps/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--spring管理全局异常处理类-->
+    <bean class="cn.sunnytech.oa.global.common.SpringExceptionHandler"/>
+    <!--交给spring管理,一启动就加载-->
+    <bean class="cn.sunnytech.oa.global.common.ApplicationContextHelper" lazy-init="false"/>
+</beans>

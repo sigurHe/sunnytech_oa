@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.sunnytech.oa.work.dao.EmployeeDao">
+    <resultMap id="employeeMap" type="Employee">
+        <id property="sn" column="sn" javaType="String"/>
+        <result property="password" column="password" javaType="String"/>
+        <result property="name" column="name" javaType="String"/>
+        <result property="subject" column="subject" javaType="Integer"/>
+        <result property="deptId" column="dept_id" javaType="Integer"/>
+        <result property="telephone" column="telephone" javaType="String"/>
+        <result property="mail" column="mail" javaType="String"/>
+        <result property="post" column="post" javaType="String"/>
+        <result property="status" column="status" javaType="Integer"/>
+        <result property="remark" column="remark" javaType="String"/>
+        <association property="department" column="dept_id" javaType="Department">
+            <id property="id" column="did" javaType="Integer"/>
+            <result property="subject" column="dsubject" javaType="Integer"/>
+            <result property="name" column="dname" javaType="String"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+    </sql>
+    <insert id="insert" parameterType="Employee">
+      insert into sys_dept values
+      (#{sn},#{password},#{name},#{subject},#{dept_id},#{telephone},#{mail},#{post},#{status},#{remark}
+      )
+    </insert>
+    <insert id="insertSelective" parameterType="Employee">
+        INSERT INTO employee
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="sn != null" >
+                sn,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="subject != null" >
+                subject = #{subject},
+            </if>
+            <if test="deptId != null" >
+                dept_id,
+            </if>
+            <if test="telephone != null" >
+                telephone,
+            </if>
+            <if test="mail != null" >
+                mail,
+            </if>
+            <if test="post != null" >
+                post,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="remark != null" >
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="sn != null" >
+                #{sn},
+            </if>
+            <if test="password != null" >
+                #{password},
+            </if>
+            <if test="name != null" >
+                #{name},
+            </if>
+            <if test="subject != null" >
+                subject = #{subject},
+            </if>
+            <if test="deptId != null" >
+                #{dept_id},
+            </if>
+            <if test="telephone != null" >
+                #{telephone},
+            </if>
+            <if test="mail != null" >
+                #{mail},
+            </if>
+            <if test="post != null" >
+                #{post},
+            </if>
+            <if test="status != null" >
+                #{status},
+            </if>
+            <if test="remark != null" >
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateBySnSelective" parameterType="Employee">
+        UPDATE employee
+        <set >
+            <if test="password != null" >
+                password = #{password},
+            </if>
+            <if test="name != null" >
+                name = #{name},
+            </if>
+            <if test="subject != null" >
+                subject = #{subject},
+            </if>
+            <if test="deptId != null" >
+                dept_id = #{deptId},
+            </if>
+            <if test="telephone != null" >
+                telephone = #{telephone},
+            </if>
+            <if test="mail != null" >
+                mail = #{mail},
+            </if>
+            <if test="post != null" >
+                post = #{operator},
+            </if>
+            <if test="status != null" >
+                status = #{operateTime},
+            </if>
+            <if test="remark != null" >
+                remark = #{operateIp},
+            </if>
+        </set>
+        WHERE sn=#{sn}
+    </update>
+    <delete id="delete" parameterType="String">
+        DELETE FROM employee WHERE sn=#{sn}
+    </delete>
+    <select id="select" parameterType="String" resultMap="employeeMap">
+        SELECT e.*,d.id did,d.name dname FROM employee e
+        LEFT JOIN department d
+        ON e.dept_id = d.id
+        WHERE e.sn={sn}
+    </select>
+    <select id="selectAll" resultMap="employeeMap">
+        SELECT e.*,d.id did,d.name dname FROM employee e
+        LEFT JOIN department d
+        ON e.dept_id = d.id ORDER BY e.sn ASC
+    </select>
+    <select id="selectByKeyword" parameterType="String" resultType="Employee">
+      SELECT e.*,d.id did,d.name dname FROM employee e
+        LEFT JOIN department d ON e.dept_id = d.id
+        WHERE
+        telephone = #{keyword} OR
+        sn = #{keyword} OR
+        mail = #{keyword}
+    </select>
+
+    <select id="getBySelective" parameterType="Employee" resultMap="employeeMap">
+        SELECT e.*,d.id did,d.name dname FROM employee e
+        LEFT JOIN department d
+        ON e.dept_id = d.id
+        <where>
+            <if test="subject !=null">
+              AND e.subject=#{subject}
+            </if>
+            <if test="deptId !=null" >
+              AND e.dept_id=#{deptId}
+            </if>
+            <if test="name != null &amp;&amp; name !=''">
+              AND e.name LIKE #{name}
+            </if>
+        </where>
+        ORDER BY e.sn ASC
+    </select>
+</mapper>
